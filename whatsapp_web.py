@@ -57,6 +57,17 @@ def scrape(prev):
     for l in recentList[start:]:
         l.click()
         time.sleep(WAIT_FOR_CHAT_TO_LOAD)
+        while True:
+            res = driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_UP)
+            begin = None
+            try:
+                begin = driver.find_element_by_xpath("//div[@class='_3sKvP']")
+            except Exception as e:
+                print("Top not yet found, scroll up ...")
+            if begin:
+                print("Top reached")
+                break
+            time.sleep(1)
         chats()
         next_focus = l
     if prev == next_focus:
