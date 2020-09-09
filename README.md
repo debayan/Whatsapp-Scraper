@@ -4,9 +4,6 @@
 * Runtime: Python 3.5
 ## How to install:
 ###
-
-
-### Create virtualenv using virtualenvwrapper
 ```
 git clone https://github.com/debayan/Whatsapp-Scraper.git
 cd Whatsapp-Scraper
