@@ -8,6 +8,7 @@ import re
 import time 
 import csv
 import geckodriver_autoinstaller
+import json
 
 
 geckodriver_autoinstaller.install() 
@@ -69,25 +70,22 @@ def scrape(prev):
                 break
             time.sleep(1)
         chats()
+        save_to_csv()
         next_focus = l
     if prev == next_focus:
         return
     scrape(next_focus)
 
 def save_to_csv():
-    rows = [[key]+message_dic[key] for key in message_dic]
-
-    with open('chats.csv', 'w') as writeFile:
-        writer = csv.writer(writeFile)
-        writer.writerows(rows)
-    writeFile.close()
+    #rows = [[key]+message_dic[key] for key in message_dic]
+    f = open('chats.json', 'w')
+    f.write(json.dumps(message_dic))
+    f.close()
 
 if __name__ == '__main__':
     driver.get("https://web.whatsapp.com/")
     wait = WebDriverWait(driver, 600)
-    
     x_arg = '//img[@class="Qgzj8 gqwaM"]'
     #group_title = wait.until(EC.presence_of_element_located((By.XPATH, x_arg)))
     time.sleep(10)
     scrape(None)
-    save_to_csv()
