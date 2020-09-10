@@ -1,7 +1,7 @@
 
 # Whatsapp Web Scraper
 
-* Runtime: Python 3.5
+* Runtime: Python 3.8.2
 ## How to install:
 ###
 ```
@@ -14,7 +14,7 @@ pip3 install geckodriver-autoinstaller selenium
 
 ### Run:
 ```
-python whatsapp_web.py
+python3 whatsapp_web.py
 (Scan the QR code using the Whatsapp app)
 ```
 If you want the chat histories of certain users only, then archive all the other user conversations on your phone first (archive, not delete). You can unarchive them later. This way, once the web interface opens up, only the chats required to be saved will show up for the script.
