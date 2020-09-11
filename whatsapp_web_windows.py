@@ -27,21 +27,24 @@ def chats():
     messages = driver.find_elements_by_xpath("//div[@class='_274yw']")
     #print(messages)
     for message in messages:
-        nametimestamphtml = message.get_attribute('innerHTML')
-        #print("nametimestamphtml : ", nametimestamphtml)
-        nametimestamp = re.search('data-pre-plain-text=\"\[(.+?): \">', nametimestamphtml).group(1)
-        print("nametimestamp:", nametimestamp)
-        messagehtml = message.find_element_by_xpath(".//div[@class='eRacY']").get_attribute('innerHTML')
-        #print(messagehtml)
-        rem = re.search('span>(.*?)</span>', messagehtml)
-        message = None
-        if rem:
-            message = rem.group(1)
-            print('message : ', message)
-        else:
-            message = '<emoji>'
-            print('emoji')
-        message_dic[name].append((nametimestamp,message))
+        try:
+            nametimestamphtml = message.get_attribute('innerHTML')
+            #print("nametimestamphtml : ", nametimestamphtml)
+            nametimestamp = re.search('data-pre-plain-text=\"\[(.+?): \">', nametimestamphtml).group(1)
+            print("nametimestamp:", nametimestamp)
+            messagehtml = message.find_element_by_xpath(".//div[@class='eRacY']").get_attribute('innerHTML')
+            #print(messagehtml)
+            rem = re.search('span>(.*?)</span>', messagehtml)
+            message = None
+            if rem:
+                message = rem.group(1)
+                print('message : ', message)
+            else:
+                message = '<emoji>'
+                print('emoji')
+            message_dic[name].append((nametimestamp,message))
+        except Exception as e:
+            print("error : ",e)
 
 def scrape(prev):
     recentList = driver.find_elements_by_xpath("//div[@class='_210SC']")
