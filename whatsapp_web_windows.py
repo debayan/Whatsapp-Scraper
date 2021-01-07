@@ -21,33 +21,36 @@ driver = webdriver.Firefox(executable_path=r'C:\Users\debayan\Downloads\geckodri
 wait = WebDriverWait(driver, 600)
 
 def chats():
-    name = driver.find_element_by_xpath("//div[@class='DP7CM']/span").text
+    name = driver.find_element_by_xpath("//div[@class='YEe1t']/span").text
     print("name",name)
     message_dic[name] = []
-    messages = driver.find_elements_by_xpath("//div[@class='_274yw']")
+    messages = driver.find_elements_by_xpath("//div[@class='_2XJpe _7M8i6']")
     #print(messages)
     for message in messages:
-        try:
-            nametimestamphtml = message.get_attribute('innerHTML')
-            #print("nametimestamphtml : ", nametimestamphtml)
-            nametimestamp = re.search('data-pre-plain-text=\"\[(.+?): \">', nametimestamphtml).group(1)
-            print("nametimestamp:", nametimestamp)
-            messagehtml = message.find_element_by_xpath(".//div[@class='eRacY']").get_attribute('innerHTML')
-            #print(messagehtml)
-            rem = re.search('span>(.*?)</span>', messagehtml)
-            message = None
-            if rem:
-                message = rem.group(1)
-                print('message : ', message)
-            else:
-                message = '<emoji>'
-                print('emoji')
-            message_dic[name].append((nametimestamp,message))
-        except Exception as e:
-            print("error : ",e)
+        nametimestamphtml = message.get_attribute('innerHTML')
+        #print("nametimestamphtml : ", nametimestamphtml)
+        nametimestamp = re.search('data-pre-plain-text=\"\[(.+?): \">', nametimestamphtml).group(1)
+        print("nametimestamp:", nametimestamp)
+        try: #check quoting
+            quotedmention = message.find_element_by_xpath(".//div[@class='zLEDC']").get_attribute('innerHTML')
+            print("quotedmention: ",quotedmention)
+            message_dic[name].append((nametimestamp,"quoting: "+quotedmention))
+        except Exception as err:
+            pass
+        messagehtml = message.find_element_by_xpath(".//div[@class='_1wlJG']").get_attribute('innerHTML')
+        #print(messagehtml)
+        rem = re.search('span>(.*?)</span>', messagehtml)
+        messagestr = None
+        if rem:
+            messagestr = rem.group(1)
+            print('message : ', messagestr)
+        else:
+            messagestr = '<emoji>'
+            print('emoji')
+        message_dic[name].append((nametimestamp,messagestr))
 
 def scrape(prev):
-    recentList = driver.find_elements_by_xpath("//div[@class='_210SC']")
+    recentList = driver.find_elements_by_xpath("//div[@class='_3soxC _2aY82']")
     #recentList.sort(key=lambda x: int(x.get_attribute('style').split("translateY(")[1].split('px')[0]), reverse=False)
 
     next_focus = None
@@ -65,7 +68,7 @@ def scrape(prev):
             res = driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_UP)
             begin = None
             try:
-                begin = driver.find_element_by_xpath("//div[@class='_3sKvP']")
+                begin = driver.find_element_by_xpath("//div[@class='_2XJpe']")
             except Exception as e:
                 print("Top not yet found, scroll up ...")
             if begin:
