@@ -10,9 +10,6 @@ import csv
 
 import json
 
-
-
-
 LAST_MESSAGES = 4
 WAIT_FOR_CHAT_TO_LOAD = 2 # in secs
 
@@ -27,27 +24,30 @@ def chats():
     messages = driver.find_elements_by_xpath("//div[@class='_2XJpe _7M8i6']")
     #print(messages)
     for message in messages:
-        nametimestamphtml = message.get_attribute('innerHTML')
-        #print("nametimestamphtml : ", nametimestamphtml)
-        nametimestamp = re.search('data-pre-plain-text=\"\[(.+?): \">', nametimestamphtml).group(1)
-        print("nametimestamp:", nametimestamp)
-        try: #check quoting
-            quotedmention = message.find_element_by_xpath(".//div[@class='zLEDC']").get_attribute('innerHTML')
-            print("quotedmention: ",quotedmention)
-            message_dic[name].append((nametimestamp,"quoting: "+quotedmention))
+        try:
+            nametimestamphtml = message.get_attribute('innerHTML')
+            #print("nametimestamphtml : ", nametimestamphtml)
+            nametimestamp = re.search('data-pre-plain-text=\"\[(.+?): \">', nametimestamphtml).group(1)
+            print("nametimestamp:", nametimestamp)
+            try:
+                quotedmention = message.find_element_by_xpath(".//div[@class='zLEDC']").get_attribute('innerHTML')
+                print("quotedmention: ",quotedmention)
+                message_dic[name].append((nametimestamp,"quoting: "+quotedmention))
+            except Exception as err:
+                pass
+            messagehtml = message.find_element_by_xpath(".//div[@class='_1wlJG']").get_attribute('innerHTML')
+            #print(messagehtml)
+            rem = re.search('span>(.*?)</span>', messagehtml, flags=re.DOTALL)
+            messagestr = None
+            if rem:
+                messagestr = rem.group(1)
+                print('message : ', messagestr)
+            else:
+                messagestr = '<emoji>'
+                print('emoji')
+            message_dic[name].append((nametimestamp,messagestr))
         except Exception as err:
-            pass
-        messagehtml = message.find_element_by_xpath(".//div[@class='_1wlJG']").get_attribute('innerHTML')
-        #print(messagehtml)
-        rem = re.search('span>(.*?)</span>', messagehtml)
-        messagestr = None
-        if rem:
-            messagestr = rem.group(1)
-            print('message : ', messagestr)
-        else:
-            messagestr = '<emoji>'
-            print('emoji')
-        message_dic[name].append((nametimestamp,messagestr))
+            print("error: ",err)
 
 def scrape(prev):
     recentList = driver.find_elements_by_xpath("//div[@class='_3soxC _2aY82']")
@@ -90,7 +90,7 @@ def save_to_csv():
 
 if __name__ == '__main__':
     driver.get("https://web.whatsapp.com/")
-    wait = WebDriverWait(driver, 600)
+    wait = WebDriverWait(driver, 1500)
     x_arg = '//img[@class="Qgzj8 gqwaM"]'
     #group_title = wait.until(EC.presence_of_element_located((By.XPATH, x_arg)))
     time.sleep(10)
